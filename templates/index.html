@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>To-Do App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="container">
+    <h1>📝 My To-Do List</h1>
+
+    <p class="task-count">
+        {{ tasks | selectattr("done", "equalto", False) | list | length }}
+        active / {{ tasks | length }} total
+    </p>
+
+    <form action="/add" method="POST">
+        <input type="text" name="task" placeholder="Enter new task..." required>
+        <button type="submit">Add</button>
+    </form>
+
+    {% if tasks %}
+    <ul>
+        {% for task in tasks %}
+        <li class="task-item {% if task.done %}completed{% endif %}">
+            <span>
+                {{ task.text }}
+                <small>{{ task.created_at }}</small>
+            </span>
+            <div>
+                <a href="/toggle/{{ loop.index0 }}" class="complete">✔</a>
+                <a href="/delete/{{ loop.index0 }}" class="delete">❌</a>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+
+    <form action="/clear_done" method="POST">
+        <button type="submit" class="clear-btn">
+            🗑 Clear Completed Tasks
+        </button>
+    </form>
+
+    {% else %}
+        <p class="empty">No tasks yet 🚀</p>
+    {% endif %}
+</div>
+</body>
+</html>
